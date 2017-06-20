@@ -1,0 +1,94 @@
+Given a string and a string dictionary, find the longest string in the dictionary that can be formed by deleting some characters of the given string. If there are more than one possible results, return the longest word with the smallest lexicographical order. If there is no possible result, return the empty string.
+
+Example 1:
+Input:
+s = "abpcplea", d = ["ale","apple","monkey","plea"]
+
+Output: 
+"apple"
+Example 2:
+Input:
+s = "abpcplea", d = ["a","b","c"]
+
+Output: 
+"a"
+Note:
+All the strings in the input will only contain lower-case letters.
+The size of the dictionary won't exceed 1,000.
+The length of all the strings in the input won't exceed 1,000.
+Subscribe to see which companies asked this question.
+
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class LongestWordInDictionaryThrougDeleting {
+
+	public boolean canBeCreated(String s1, String s2) {
+		int len1 = s1.length();//target
+		int len2 = s2.length();//old
+		int i = 0;
+		int j = 0;
+		while(i < len1 && j < len2) {
+			if(s1.charAt(i) == s2.charAt(j)) {
+				i++;
+				j++;
+			} else {
+				j++;
+			}
+		}
+		if(i == len1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	/**
+	 * 重点：***注意***：要对list d进行排序，才能得到字典序；
+	 * 1.进行判断当前list中元素串能否通过给点的子串表示，如果可以，比较长度，得到较长的进行记录；
+	 * @param s
+	 * @param d
+	 * @return
+	 */
+	public String findLongestWord(String s, List<String> d) {
+		if(s == null || s.length() == 0 || d == null || d.size() == 0) {
+			return "";
+		} else {
+			int dlen = d.size();
+			String cur = "";
+			String res = "";
+			Collections.sort(d);
+			int max = 0;
+			for(int i = 0; i < dlen; i++) {
+				cur = d.get(i);
+				if(canBeCreated(cur, s)) {
+					if(max < cur.length()) {
+						res = cur;
+						max = cur.length();
+					}
+				}
+			}
+			return res;
+		}
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		LongestWordInDictionaryThrougDeleting dd = new LongestWordInDictionaryThrougDeleting();
+		List<String> d = new ArrayList<String>();
+		d.add("ale");
+		d.add("apple");
+		d.add("monkey");
+		d.add("plea");
+		String s = "abpcplea";
+		String res = dd.findLongestWord(s, d);
+		System.out.println(res);
+	}
+
+}
