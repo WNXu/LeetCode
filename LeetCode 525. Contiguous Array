@@ -1,0 +1,72 @@
+Given a binary array, find the maximum length of a contiguous subarray with equal number of 0 and 1.
+
+Example 1:
+Input: [0,1]
+Output: 2
+Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
+Example 2:
+Input: [0,1,0]
+Output: 2
+Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+Note: The length of the given binary array will not exceed 50,000.
+
+题目大意：
+给定一个二进制数组，求其中满足0的个数与1的个数相等的最长子数组
+
+注意：给定二进制数组的长度不超过50,000
+
+import java.util.HashMap;
+
+public class ContigousNumber {
+
+	/**
+	 * 发现 [0,1]个数相同的子数组的长度；
+	 * 其中可以将 0转换为-1， 1 装换为1； 即用bpsk调制 2 * nums[i - 1] - 1；
+	 * 然后求[0-i]的和： 如 数组[0 0 1 0 1 1 0 1 0 1]--->[-1 -1 1 -1 1 1 -1 1 -1 1]--->
+	 * sum和就是[-1, -2, -1, -2, -1, 0, -1, 0, -1, 0];***注意***：因为这种情况的存在，所以要先把下面一行的注意；
+	 * 再次，用map存储各个和所对应的位置下标，在存储的时候将i存储为i+1;***注意**map.put(0,0);即初始的sum=0时，下标位置为0；所以在上面那种情况，我们才求出10 而不是8；
+	 * 举个例子：如map.put(-1, 1); 那么最后一个-1的位置在第9；所以当前从-2对应的位置的值-1开始到第9个位置上的0位置构成的段其实[0 1]的值是相同的，只有相同才有 -1+0 = -1;所以将位置下标9 - （最早的-1存的下标1） = 8；
+	 * 最后一个0与第一个初始的0整好相减 = 10； 
+	 * @param nums
+	 * @return
+	 */
+	public int findMaxLength(int[] nums) {
+
+		if(nums == null || nums.length == 0) {
+			return 0;
+		} else {
+			int len = nums.length;
+			int max = 0;
+			HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+			int sum = 0;
+			map.put(0, 0);
+			
+			for(int i = 1; i <= len; i++) {
+				sum += 2 * nums[i - 1] - 1;//0 -> -1  1-1;
+				if(map.containsKey(sum)) {
+					if(max < (i - map.get(sum))) {
+						max = i - map.get(sum);
+					} 
+				} else {
+					map.put(sum, i);
+				}
+			}
+			return max;
+		}
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		int[] nums = {0, 0, 1, 0, 1, 1, 0, 1, 0, 1};
+		ContigousNumber cn = new ContigousNumber();
+		int res = cn.findMaxLength(nums);
+		System.out.println(res);
+	}
+
+}
+
+
